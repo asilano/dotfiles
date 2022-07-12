@@ -1,0 +1,70 @@
+[user]
+	name = Chris Howlett
+	email = chris.howlett@freeagent.com
+[core]
+        editor = code --wait --reuse-window
+	pager = delta
+[include]
+        path = ~/delta/themes.gitconfig
+[alias]
+  fleece = push --force-with-lease
+
+  lol = log --graph --decorate --pretty=format:'%C(red) %h %C(cyan)%d %C(yellow) %s %C(green)(%cr %C(cyan)by %cN%Cgreen)' --abbrev-commit
+  lola = log --graph --decorate --pretty=format:'%C(red) %h %C(cyan)%d %C(yellow) %s %C(green)(%cr %C(cyan)by %cN%Cgreen)' --abbrev-commit --all
+
+  # Get the current branch name (not so useful in itself, but used in
+  # other aliases)
+  branch-name = "!git rev-parse --abbrev-ref HEAD"
+  # Push the current branch to the remote "origin", and set it to track
+  # the upstream branch
+  publish = "!git push -u origin $(git branch-name)"
+
+  # Delete all branches no longer on origin.
+  purge = "!git refresh && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D"
+
+  # Stage everything except matching filespec
+  allbar = "!git add . && git reset HEAD $*"
+
+  # Fetch and checkout. Useful for testing PRs
+  fco = "!git fetch && git checkout $1"
+
+  # Pull-rebase when your working copy is dirty (which is, of course, potentially dangerous - use only if you know the dirt is orthogonal)
+  prebase = "!git stash && git pull --rebase && git stash pop"
+
+  dammit = commit -a --amend --no-edit
+	refresh = !git remote update --prune && git checkout master && git reset --hard origin/master
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+[commit]
+	gpgsign = true
+	verbose = true
+[help]
+	autocorrect = 9
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+        features = mantis-shrimp
+        navigate = true
+        line-numbers = true
+        hyperlinks = true
+        hyperlinks-file-link-format = "file://{path}#{line}"
+        side-by-side = false
+[merge]
+    conflictstyle = diff3
+[diff]
+    colorMoved = default
+[color]
+	ui = true
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = 11
+	frag = magenta bold
+	func = 146 bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
