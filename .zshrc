@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Fig pre block. Keep at the top of this file.
 [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
 # If you come from bash you might have to change your $PATH.
@@ -10,7 +17,8 @@ export ZSH="/Users/chrishowlett/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -72,8 +80,8 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
-
+plugins=(git fzf-tab F-Sy-H colored-man-pages zsh-autosuggestions)
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -102,17 +110,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-#- Setup chruby environment
-CHRUBY_DIR="$(brew --prefix chruby)"
-. "$CHRUBY_DIR/share/chruby/chruby.sh"
-. "$CHRUBY_DIR/share/chruby/auto.sh"
-
-chruby 3.1.1 # use this version by default
-eval "$(devkit env vars)"
-
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 export AWS_VAULT_KEYCHAIN_NAME=login
 export AWS_VAULT_PROMPT=osascript
 export AWS_SDK_LOAD_CONFIG=1
@@ -122,21 +119,24 @@ if command -v __git_complete > /dev/null; then
   __git_complete config __git_main
 fi
 
-alias r="bundle exec rspec"
+alias r="DISABLE_SPRING=true bundle exec rspec"
 alias ocd='fc -e "sed -i \"\" -e \"s/^/OVERCOMMIT_DISABLE=1 /\""'
 alias grc='GIT_EDITOR=true git rebase --continue'
+alias draft-pr="gh pr create --draft --fill-verbose && gh pr view --web"
+alias fa-refresh="git refresh master && bundle && bin/rails db:migrate && touch tmp/restart.txt"
 alias om-start='overmind s -f Procfile.dev'
 alias om-pry='overmind connect web'
 alias grab-int="devkit server grab --any"
 alias deploy-int="devkit deploy int"
-function free-int() { devkit server release int"$1" }
+alias deploy="yes | deploy-int"
+alias r-changed-tests='(){git diff --name-only ${1:-HEAD} -- spec | xargs bin/rspec;}'
 
-export PATH="/usr/local/opt/mysql@5.7/bin:$PATH"
+alias exzed='(){exercism download --track=${2:-elixir} --exercise=$1 && cd ~/Exercism/${2:-elixir} && zed $1;}'
+alias exsub='exercism submit lib/*'
+export PATH="/opt/homebrew/opt/mysql@5.7/bin:$PATH"
 
 export PATH="$PATH:/Users/chrishowlett/Library/Android/sdk/platform-tools"
 export ANDROID_SDK=/Users/chrishowlett/Library/Android/sdk
-
-
 
 # HSTR configuration - add this to ~/.zshrc
 alias hh=hstr                    # hh to be alias for hstr
@@ -150,3 +150,9 @@ GIT_PROMPT_EXECUTABLE="haskell"
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && . "$HOME/.fig/shell/zshrc.post.zsh"
+
+# Source automated FreeAgent shell config
+source /Users/chrishowlett/.freeagent_shell_profile
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
