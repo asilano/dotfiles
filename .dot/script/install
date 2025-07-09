@@ -1,0 +1,33 @@
+#!/bin/bash
+set -e
+
+# Based on:
+#  https://developer.atlassian.com/blog/2016/02/best-way-to-store-dotfiles-git-bare-repo/
+
+config_location=$HOME/.cfg
+
+# Clone a bare repository:
+if [ -f "$config_location/HEAD" ]; then
+  echo "Skipping git clone; it appears to already exist"
+else
+  git clone --bare https://github.com/asilano/dotfiles $config_location
+fi
+
+function config {
+  /usr/bin/git --git-dir=$config_location/ --work-tree=$HOME $@
+}
+
+# Checkout into $HOME:
+config checkout
+
+# Set up remotes:
+config config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+config fetch
+
+# Update any initialised submodules
+config submodule update
+
+# Ignore untracked files (i.e. contents of $HOME)
+config config --local status.showUntrackedFiles no
+
+echo "Initialisation complete; you may want to run ~/.dot/script/setup now."

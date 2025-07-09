@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# ====== Install system dependencies ======
+
+if command -v brew > /dev/null; then
+  echo "Checking any Homebrew requirements..."
+  brew bundle --file $HOME/.dot/Brewfile
+else
+  echo "No brew found - visit https://brew.sh to install."
+fi;
+
+# ====== Install Neovim plugins ======
+
+if command -v nvim > /dev/null; then
+  echo "Installing Neovim packages with Lazy.nvim..."
+  nvim --headless -c 'quitall'
+else
+  echo "No Neovim found - skipping plugin configuration."
+fi
+
+# ====== Compile bat themes ======
+
+if command -v bat > /dev/null; then
+  echo "Compiling bat themes..."
+  bat cache --build
+else
+  echo "No bat found - skipping theme compilation"
+fi
