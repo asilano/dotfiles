@@ -1,0 +1,11 @@
+[user]
+name = "Chris Howlett"
+email = "chris.howlett@freeagent.com"
+
+[ui]
+editor = "code -w"
+pager = "delta"
+merge-editor = "vscode"
+
+[snapshot]
+max-new-file-size = 3000000
